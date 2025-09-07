@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Europol Fallbeispiel: Global Chain</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #003399; /* Europol-Blau */
+        color: #ffcc00; /* Europol-Gelb */
+        margin: 0;
+        padding: 0;
+        text-align: center;
+    }
+    .container {
+        padding: 50px 20px;
+        max-width: 800px;
+        margin: auto;
+    }
+    h1, h2, h3 {
+        margin-bottom: 20px;
+    }
+    button {
+        background-color: #ffcc00;
+        color: #003399;
+        font-size: 1.2em;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        margin: 10px;
+    }
+    button:hover {
+        background-color: #e6b800;
+    }
+    input[type="text"] {
+        font-size: 1em;
+        padding: 10px;
+        border-radius: 5px;
+        border: 2px solid #ffcc00;
+        width: 300px;
+        margin-top: 20px;
+    }
+    .hidden {
+        display: none;
+    }
+    .hint {
+        background-color: rgba(255, 204, 0, 0.2);
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 5px;
+        color: #fff;
+        text-align: left;
+    }
+</style>
+</head>
+<body>
+
+<div class="container" id="startPage">
+    <h1>Europol: Menschenhandel in Europa</h1>
+    <h2>Fallbeispiel: Global Chain</h2>
+    <p>Diese Webseite zeigt euch anhand eines Fallbeispiels, wie Europol internationale Ermittlungen gegen Menschenhandel durchführt. Ihr könnt Hinweise sammeln, den Täter entlarven und den Fall lösen.</p>
+    <button onclick="navigate('startPage','introPage')">Starten</button>
+</div>
+
+<div class="container hidden" id="introPage">
+    <h2>Einleitung zum Fall</h2>
+    <p>Die 19-jährige Elena aus Rumänien sollte ein Praktikum in Berlin antreten. Über eine Online-Jobanzeige wurde sie nach Deutschland gelockt, doch danach verliert ihre Familie den Kontakt zu ihr. Dein Ziel ist es nun, den Täter zu finden und Elena zu retten.</p>
+    <button onclick="navigate('introPage','qrPage')">Los geht's</button>
+    <button onclick="goBack()">Zurück</button>
+</div>
+
+<div class="container hidden" id="qrPage">
+    <h2>Hinweise sammeln</h2>
+    <p>Scanne die QR-Codes, um Hinweise zu entdecken:</p>
+    <button onclick="showHint(1)">Hinweis 1</button>
+    <button onclick="showHint(2)">Hinweis 2</button>
+    <button onclick="showHint(3)">Hinweis 3</button>
+    <button onclick="showHint(4)">Hinweis 4</button>
+    <button onclick="showHint(5)">Hinweis 5</button>
+    <button onclick="showHint(6)">Hinweis 6</button>
+    
+    <div id="hintsContainer"></div>
+    
+    <h3>Wer ist der Täter?</h3>
+    <input type="text" id="suspectInput" placeholder="Name des Täters">
+    <br>
+    <button onclick="checkSuspect()">Täter überprüfen</button>
+    <button onclick="goBack()">Zurück</button>
+</div>
+
+<div class="container hidden" id="successPage">
+    <h1>Herzlichen Glückwunsch!</h1>
+    <p>Du hast den Fall gelöst und Elena gerettet!</p>
+    <button onclick="goBack()">Zurück</button>
+</div>
+
+<script>
+let historyStack = []; // Speichert die Navigation
+
+function navigate(hideId, showId) {
+    document.getElementById(hideId).classList.add('hidden');
+    document.getElementById(showId).classList.remove('hidden');
+    historyStack.push(hideId); // Seite merken
+}
+
+function goBack() {
+    if (historyStack.length === 0) return;
+    const lastPage = historyStack.pop();
+    const visiblePage = document.querySelector('.container:not(.hidden)');
+    if (visiblePage) visiblePage.classList.add('hidden');
+    document.getElementById(lastPage).classList.remove('hidden');
+}
+
+const hints = {
+    1: "Jobanzeige: Praktikum in Berlin – Ansprechpartnerin: Sofia R.",
+    2: "Elena schreibt: Ich bin in Berlin, Frau R. hat mich in ein kleines Appartement gebracht.",
+    3: "Nachbarin: Ich habe gesehen, dass Elena jeden Abend zu einem Lieferwagen gebracht wurde. Auf dem Lieferwagen steht 'O. Events'.",
+    4: "Informant: Sofia R. organisiert seit Monaten Praktika für junge Frauen aus Osteuropa. Alles gefälscht.",
+    5: "Bankauszug: Mehrere Überweisungen aus Rumänien an Sofia R. in Berlin, jeweils 500 Euro.",
+    6: "Europol-Datenbank: Frühere Fälle zeigen das gleiche Muster, Täterin immer: Sofia R."
+};
+
+const shownHints = new Set();
+
+function showHint(number) {
+    if (shownHints.has(number)) return; // verhindert doppelte Hinweise
+    shownHints.add(number);
+    const container = document.getElementById('hintsContainer');
+    const hintDiv = document.createElement('div');
+    hintDiv.className = 'hint';
+    hintDiv.textContent = hints[number];
+    container.appendChild(hintDiv);
+}
+
+function checkSuspect() {
+    const input = document.getElementById('suspectInput').value.trim().toLowerCase();
+    if (["sofia r.", "sofia r"].includes(input)) {
+        navigate('qrPage','successPage');
+    } else {
+        alert('Das ist nicht korrekt. Überprüfe die Hinweise erneut!');
+    }
+}
+</script>
+
+</body>
+</html>
